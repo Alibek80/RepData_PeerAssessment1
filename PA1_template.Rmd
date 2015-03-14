@@ -8,6 +8,7 @@ output:
 ```{r setoptions, echo = TRUE}
 library(knitr)
 opts_chunk$set (echo = TRUE)
+Sys.setlocale("LC_TIME", "English")
 
 ```
 
@@ -70,5 +71,71 @@ sum(is.na(data))
 
 ```
 
+* Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
+      * I used mean for the interval
+      
+* Create a new dataset that is equal to the original dataset but with the missing data filled in.
+```{r imputing_na}
+imputed_data <- data 
+for (i in 1:nrow(imputed_data)) {
+    if (is.na(imputed_data$steps[i])) {
+        imputed_data$steps[i] <- mean_steps[which(imputed_data$interval[i] == mean_steps$interval), ]$avg_steps
+    }
+}
+
+```
+
+* Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+
+```{r hist_imputed_data}
+
+ggplot(imputed_data, aes(date, steps)) + geom_histogram(stat = "identity") + labs(title = "Total Number of Steps Taken Each Day", x = "Date", y = "Total number of steps")
+
+```
+
+      * Mean of total number of steps after imputing the data
+
+```{r mean_imputed}
+
+total_imputed <- ddply (imputed_data, .(date), summarize, total_steps = sum (steps))
+mean (total_imputed$total_steps)
+
+```
+
+      * Median of total number of steps after imputing the data
+```{r median_imputed}
+median (total_imputed$total_steps)
+
+```
+
+      * Comparing with the estimates from the first part of the assignment
+
+```{r compare}
+mean (total_imputed$total_steps) - mean (total_steps)
+median (total_imputed$total_steps) - median (total_steps)
+```
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+* Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.
+
+```{r weekdays}
+
+imputed_data$weekdays <- weekdays(imputed_data$date)
+imputed_data$weekdays <- mapvalues(imputed_data$weekdays, c("Monday", "Tuesday","Wednesday","Thursday", "Friday"), rep("weekday", 5))
+imputed_data$weekdays <- mapvalues(imputed_data$weekdays, c("Saturday", "Sunday"), rep("weekend", 2))
+
+
+```
+
+* Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
+
+```{r plot_weekdays}
+mean_steps_weekdays <- ddply (imputed_data, .(interval, weekdays), summarize, avg_steps = mean (steps))
+
+ggplot(mean_steps_weekdays, aes(interval, avg_steps)) + geom_line() + facet_grid(weekdays~.) +labs(x = "Interval", y = "Number of steps")
+
+```
+
+
+
