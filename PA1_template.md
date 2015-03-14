@@ -1,19 +1,15 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
-```{r setoptions, echo = TRUE}
+
+```r
 library(knitr)
 opts_chunk$set (echo = TRUE)
-
 ```
 
 
 ## Loading and preprocessing the data
-```{r loading_data}
+
+```r
 data <- read.csv("activity.csv", colClasses = c("integer", "Date", "integer"))
 withoutNA <- na.omit (data)
 ```
@@ -21,24 +17,34 @@ withoutNA <- na.omit (data)
 ## What is mean total number of steps taken per day?
 
 * Make a histogram of the total number of steps taken each day
-```{r hist_steps}
+
+```r
 library(ggplot2)
 ggplot(withoutNA, aes(date, steps)) + geom_histogram(stat = "identity") + labs(title = "Total Number of Steps Taken Each Day", x = "Date", y = "Total number of steps")
-
 ```
+
+![](PA1_template_files/figure-html/hist_steps-1.png) 
 
 * Calculate and report the mean and median of the total number of steps taken per day
       * mean of the total number of steps taken per day:
-```{r mean_steps}
+
+```r
 total_steps <- tapply (withoutNA$steps, withoutNA$date, sum)
 mean(total_steps)
+```
 
+```
+## [1] 10766.19
 ```
       
       * median of the total number of steps taken per day:      
-```{r median_steps}
-median(total_steps)
 
+```r
+median(total_steps)
+```
+
+```
+## [1] 10765
 ```
 
 
@@ -46,18 +52,25 @@ median(total_steps)
 
 * Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
-```{r plot_interval}
+
+```r
 library(plyr)
 mean_steps <- ddply (withoutNA, .(interval), summarize, avg_steps = mean (steps))
 ggplot(mean_steps, aes(interval, avg_steps)) + geom_line() + labs(title = "Average Number of Steps Taken Each 5-Minute Interval", x = "5-minute interval", y = "Average number of steps")
-
 ```
+
+![](PA1_template_files/figure-html/plot_interval-1.png) 
 
 * Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
-```{r max_interval}
-mean_steps [mean_steps$avg_steps == max(mean_steps$avg_steps),] [1]
 
+```r
+mean_steps [mean_steps$avg_steps == max(mean_steps$avg_steps),] [1]
+```
+
+```
+##     interval
+## 104      835
 ```
 
 
@@ -65,9 +78,13 @@ mean_steps [mean_steps$avg_steps == max(mean_steps$avg_steps),] [1]
 
 * Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
 
-```{r number_na}
-sum(is.na(data))
 
+```r
+sum(is.na(data))
+```
+
+```
+## [1] 2304
 ```
 
 
