@@ -24,7 +24,7 @@ withoutNA <- na.omit (data)
 * Make a histogram of the total number of steps taken each day
 ```{r hist_steps}
 library(ggplot2)
-ggplot(withoutNA, aes(date, steps)) + geom_histogram(stat = "identity") + labs(title = "Total Number of Steps Taken Each Day", x = "Date", y = "Total number of steps")
+ggplot(withoutNA, aes(date, steps)) + geom_histogram(stat = "identity", colour = "#9999CC", fill = "#9999CC") + labs(title = "Total Number of Steps Taken Each Day", x = "Date", y = "Total number of steps")
 
 ```
 
@@ -50,7 +50,7 @@ median(total_steps)
 ```{r plot_interval}
 library(plyr)
 mean_steps <- ddply (withoutNA, .(interval), summarize, avg_steps = mean (steps))
-ggplot(mean_steps, aes(interval, avg_steps)) + geom_line() + labs(title = "Average Number of Steps Taken Each 5-Minute Interval", x = "5-minute interval", y = "Average number of steps")
+ggplot(mean_steps, aes(interval, avg_steps)) + geom_line(colour = "#9999CC", size=1) + labs(title = "Average Number of Steps Taken Each 5-Minute Interval", x = "5-minute interval", y = "Average number of steps")
 
 ```
 
@@ -89,7 +89,7 @@ for (i in 1:nrow(imputed_data)) {
 
 ```{r hist_imputed_data}
 
-ggplot(imputed_data, aes(date, steps)) + geom_histogram(stat = "identity") + labs(title = "Total Number of Steps Taken Each Day", x = "Date", y = "Total number of steps")
+ggplot(imputed_data, aes(date, steps)) + geom_histogram(stat = "identity", colour = "#9999CC", fill = "#9999CC") + labs(title = "Total Number of Steps Taken Each Day", x = "Date", y = "Total number of steps")
 
 ```
 
@@ -133,7 +133,7 @@ imputed_data$weekdays <- mapvalues(imputed_data$weekdays, c("Saturday", "Sunday"
 ```{r plot_weekdays}
 mean_steps_weekdays <- ddply (imputed_data, .(interval, weekdays), summarize, avg_steps = mean (steps))
 
-ggplot(mean_steps_weekdays, aes(interval, avg_steps)) + geom_line() + facet_grid(weekdays~.) +labs(x = "Interval", y = "Number of steps")
+ggplot(mean_steps_weekdays, aes(interval, avg_steps)) + geom_line(colour = "#9999CC", size=1) + facet_grid(weekdays~.) +labs(x = "Interval", y = "Number of steps")
 
 ```
 
